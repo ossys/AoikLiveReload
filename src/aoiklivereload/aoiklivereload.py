@@ -51,6 +51,8 @@ class LiveReloader(FileSystemEventHandler):
         RELOAD_MODE_V_SPAWN_EXIT,
         RELOAD_MODE_V_SPAWN_WAIT,
     )
+    
+    on_stop = None
 
     def __init__(
         self,
@@ -125,6 +127,9 @@ class LiveReloader(FileSystemEventHandler):
 
         # Whether the watcher thread should stop
         self._watcher_to_stop = False
+
+    def set_on_stop(self, on_stop):
+        self.on_stop = on_stop
 
     def start_watcher_thread(self):
         """
@@ -431,6 +436,9 @@ class LiveReloader(FileSystemEventHandler):
         :return:
             None.
         """
+        if self.on_stop is not None:
+            self.on_stop()
+
         # Create command parts
         cmd_parts = [sys.executable] + sys.argv
 
